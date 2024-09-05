@@ -1,25 +1,26 @@
 import React from 'react'
 
 function Button({
-    className='',
     text,
+    img,
     type='button',
     onClick,
-    style={},
     ...props
 }) {
-  return (
-    <div>
-        <button
-        className={className}
+  return (  
+      <button
+        className='border-none text-white flex items-center w-60 p-2 md:p-3 bg-primaryColor justify-center rounded-md cursor-pointer'
         type={type}
         onClick={onClick}
-        style={style}
         {...props}
         > 
-        {text}
-        </button>
-    </div>
+          <img 
+          src={img} 
+          alt="join-icon" 
+          className='h-5 w-5 pr-1'
+          />
+          <span>{text}</span>
+      </button>
   )
 }
 
