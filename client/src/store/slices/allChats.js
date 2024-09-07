@@ -16,8 +16,19 @@ const chatSlicer = createSlice({
             state.roomDetails[roomId]['content'] = [];
             state.roomIds.push(roomId)
         }
-       } 
+       },
+       addMessage:(state,action)=>{
+        const {roomid,userName,message,time,role} = action.payload;
+        if(state.roomDetails[roomid]){
+            state.roomDetails[roomid].content.push({
+                role,
+                userName,
+                message,
+                time
+            })
+        }
+       }
     }
 })
-export const {addGroup} = chatSlicer.actions
+export const {addGroup,addMessage} = chatSlicer.actions
 export default chatSlicer.reducer

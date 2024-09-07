@@ -13,7 +13,7 @@ function AllChats() {
             <div className='flex flex-col'>
                {
                 roomIds?.map((id,index)=>(
-                  <RoomDetails key={index} id={id}/>
+                  <RoomDetails key={id} index={index} roomid={id}/>
                 ))
                }
             </div>
