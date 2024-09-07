@@ -5,16 +5,25 @@ import { ToastContainer } from 'react-toastify'
 import toastify from '../utils/Toast.js';
 import { v4 as uuidv4} from 'uuid';
 import socket from '../utils/socketio.js';
+import { useSelector,useDispatch } from 'react-redux';
+import { addGroup } from '../store/slices/allChats.js';
+import { useNavigate } from 'react-router-dom';
 
 function CreateARoom() {
 
-  const [joinRoomId,setJoinRoomId] = useState('')
-  const [createRoomName,setCreateRoomName]=useState('')
+  const [roomId,setRoomId] = useState('')
+  const [roomName,setRoomName]=useState('')
+  const [roomAvatar,setRoomAvatar]=useState(null)
   const [isCreateRoomDialogboxOpen,setIsCreateRoomDialogboxOpen]=useState(false);
   const [avatarOption,setAvatarOption]=useState([])
-  const [roomAvatar,setRoomAvatar]=useState(null)
   const [isSelected,setIsSelected]=useState(null)
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate();
   
+  const userName = useSelector(state=>state?.user?.name);
+  const userProfileUrl = useSelector(state=>state?.user?.profileUrl);
+
   useEffect(()=>{
     let avatars = [];
     for(let i=0;i<9;i++){
@@ -35,20 +44,36 @@ function CreateARoom() {
     setIsSelected(index);
   }
 
-  const handleJoinAsUser = ()=>{
-    if(joinRoomId.trim()==''){
+  const handleJoinRoom = ()=>{
+    if(roomId.trim()==''){
       toastify('error','Please Enter Room Id')
     }else{
-      toastify('success',`you joined`)
+        socket.emit('join-room',{
+          roomId,
+          userName
+        })
+        socket.on('room-detail',({roomId,roomAvatar,roomName})=>{
+          dispatch(addGroup({roomId,roomAvatar,roomName}))
+          toastify('success',`you joined - ${roomName}`)
+        })
+        navigate('/chats')
     }
   }
 
-  const handleJoinAsAdmin = ()=>{
-      if(createRoomName.trim()=='' || roomAvatar==null){
+  const handleCreateRoom = ()=>{
+      if(roomName.trim()=='' || roomAvatar==null){
         toastify('error','Please Enter RoomId and select the avatar')
       }else{
-        const roomid = uuidv4();
-        
+        const roomId = uuidv4();
+        socket.emit('create-room',{
+         roomId,
+         roomName,
+         roomAvatar,
+         userName
+        })
+        dispatch(addGroup({roomId,roomAvatar,roomName}))
+        toastify('success',`you created - ${roomName}`)
+        navigate('/chats')
       }
   }
 
@@ -62,14 +87,14 @@ function CreateARoom() {
             <Input 
             type='text' 
             className='my-2' 
-            value={joinRoomId} 
-            onChange={(e)=>setJoinRoomId(e.target.value)} 
+            value={roomId} 
+            onChange={(e)=>setRoomId(e.target.value)} 
             placeholder='Enter A Room Id' 
             />
             <Button 
             text='Join The Room' 
             img='https://img.icons8.com/?size=100&id=2460&format=png&color=ffffff'
-            onClick={handleJoinAsUser}
+            onClick={handleJoinRoom}
             />
       </div>
 
@@ -89,14 +114,14 @@ function CreateARoom() {
             <Input 
             type='text' 
             className='my-2' 
-            value={createRoomName} 
-            onChange={(e)=>setCreateRoomName(e.target.value)} 
+            value={roomName} 
+            onChange={(e)=>setRoomName(e.target.value)} 
             placeholder='Enter A Room name' 
             />
             <h3 className='font-semibold text-lg my-1'>Select Your Avatar</h3>
              <div className='flex w-[180px] md:w-60 flex-wrap mx-auto'>
                 {
-                  avatarOption.length!==0?avatarOption.map((img,index)=>(
+                  avatarOption?.length!==0?avatarOption?.map((img,index)=>(
                     <div key={index} onClick={()=>handleSetRoomAvatar(img,index)} className={`md:h-20 md:w-20 md:p-2 h-[60px] w-[60px] p-[6px] cursor-pointer ${isSelected==index?'border border-primaryColor':''}`}>
                       <img src={img} alt={`avatar-${index}`} className='md:h-16 md:w-16 h-12 w-12 rounded-full object-cover' />
                     </div>
@@ -104,7 +129,7 @@ function CreateARoom() {
                 }
              </div>
              <Button 
-              onClick={handleJoinAsAdmin} 
+              onClick={handleCreateRoom} 
               text='Join The Room'
               img='https://img.icons8.com/?size=100&id=2460&format=png&color=ffffff'
               />

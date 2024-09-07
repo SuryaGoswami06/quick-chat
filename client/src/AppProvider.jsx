@@ -7,12 +7,15 @@ import socket from './utils/socketio.js'
 function AppProvider() {
 
   useEffect(()=>{
+
       socket.on('connect',()=>{
         console.log('socket connected'+socket.id)
       })
+
       socket.on('disconnet',()=>{
         console.log('socket disconnect')
       })
+
       return ()=>{
         socket.off('connect');
         socket.off('disconnect');

@@ -17,7 +17,7 @@ function AppRoutes() {
             <Route path='' element={<Intro/>}/>
             <Route path="create-a-room" element={<CreateARoom />} />
             <Route path="chats" element={<AllChats />}>
-              <Route path=":username" element={<PrivateChat/>} />
+              <Route path=":roomid" element={<PrivateChat/>} />
             </Route>
             <Route path='about' element={<About/>} />
             <Route path='privacy-policy' element={<PrivacyPolicy />} />

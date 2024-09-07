@@ -2,10 +2,20 @@ import {createSlice} from '@reduxjs/toolkit'
 
 const chatSlicer = createSlice({
     name:'chat',
-    initialState:[],
+    initialState:{
+        roomIds:[],
+        roomDetails:{}
+    },
     reducers:{
        addGroup:(state,action)=>{
-        state.push(action.payload)
+        const {roomId,roomName,roomAvatar} = action.payload
+        if(!state.roomDetails[roomId]){
+            state.roomDetails[roomId] = {};
+            state.roomDetails[roomId]['roomName'] = roomName;
+            state.roomDetails[roomId]['roomAvatar'] = roomAvatar;
+            state.roomDetails[roomId]['content'] = [];
+            state.roomIds.push(roomId)
+        }
        } 
     }
 })
