@@ -80,8 +80,6 @@ function CreateARoom() {
   return (
     <div className='flex items-center h-full justify-center md:flex-row flex-col p-3'>
 
-      <ToastContainer />
-
       <div className=''>
             <h1 className='text-xl uppercase font-bold'>ephemeral</h1>
             <Input 

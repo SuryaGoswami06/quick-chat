@@ -1,8 +1,9 @@
-import React ,{useState,useEffect}from 'react'
+import React ,{useState,useEffect,useRef}from 'react'
 import { useParams,Link } from 'react-router-dom'
 import {useSelector,useDispatch} from 'react-redux'
 import {addMessage} from '../store/slices/allChats.js'
 import socket from '../utils/socketio.js'
+import toastify from '../utils/Toast.js'
 
 function PrivateChat() {
   const {roomid}=useParams();
@@ -11,6 +12,7 @@ function PrivateChat() {
   const dispatch = useDispatch();
   const roomDetails = useSelector(state=>state?.allChats?.roomDetails[roomid])
   const userName = useSelector(state=>state?.user?.name)
+  const roomIdCopyRef = useRef(null);
 
   const handleSendMessageButton=()=>{
     if(message.trim()!==''){
@@ -20,7 +22,7 @@ function PrivateChat() {
       const day = currentDate.getDate();
       const hours = currentDate.getHours();
       const minutes = currentDate.getMinutes();
-      const time = `${year}-${month}-${day} ${hours}:${minutes}`
+      const time = `${year}-${month}-${day} ${hours<12?'0'+hours:hours}:${minutes<10?'0'+minutes:minutes}`
       socket.emit('send-message',{
         userName,
         message,
@@ -28,6 +30,7 @@ function PrivateChat() {
         time
       })
       dispatch(addMessage({userName,message,roomid,time,role:'sender'}))
+      setMessage('');
     }
   }
   
@@ -41,9 +44,16 @@ function PrivateChat() {
       }
   },[])
 
+  const handleCopyRoomId = ()=>{
+    if(roomIdCopyRef.current){
+      window.navigator.clipboard.writeText(roomIdCopyRef.current.innerHTML);
+      toastify('success','roomId copied sucessfully')
+    }
+  }
+
   return (
     <div className='w-full flex flex-col relative'>
-        <div className='flex justify-between bg-[#E5E4E2] p-2 overflow-hidden'>
+        <div className='flex justify-between border-b border-black p-[16.25px] overflow-hidden'>
            <div className='flex items-center'>
               <Link to='/chats'>
                 <img className='rotate-180 h-6 w-6 mx-3' src="https://img.icons8.com/?size=100&id=gkgXdvj3Owk3&format=png&color=000000" alt="back-to-chat-icon" />
@@ -51,21 +61,25 @@ function PrivateChat() {
               <img className='h-12 w-12 rounded-full mx-3' src={roomDetails?.roomAvatar} alt="room-image" />
               <div className='flex flex-col'>
                 <span>{roomDetails?.roomName}</span>
-                <span>{roomid}</span>
+                <div className='flex items-center'>
+                  <span>room-id : &nbsp;</span>
+                  <span ref={roomIdCopyRef}>{roomid}</span>
+                  <img onClick={handleCopyRoomId} className='h-5 w-5 ml-2 cursor-pointer' src='https://img.icons8.com/?size=100&id=5OYsjZnVeN8Z&format=png&color=000000' alt="" />
+                </div>
               </div>
            </div>
            <div>
 
            </div>
         </div>
-        <div className='overflow-y-auto'>
+        <div className='overflow-y-auto pb-36'>
             {
               roomDetails?.content?.map((msg,index)=>{
-              return <div key={index} className={` flex w-full ${msg?.role=='sender'?'justify-end bg-primaryColor':'justify-start bg-gray-400'}`}>
-                          <div className='flex flex-col'>
-                            <span>{msg?.userName}</span>
-                            <p>{msg?.message}</p>
-                            <span>{msg?.time}</span>
+              return <div key={index} className={` flex w-full ${msg?.role=='sender'?'justify-end':'justify-start'}`}>
+                          <div className={`flex flex-col`}>
+                            <span className={`text-primaryColor text-sm ${msg?.role=='sender'?'pl-3':'pl-1'}`}>{msg?.role!=='sender'?msg?.userName:'you'}</span>
+                            <p className={`px-4 py-1 border-black border-y ${msg?.role=='sender'?'rounded-l-full border-l border-r-0':'rounded-r-full border-r border-l-0'}`}>{msg?.message}</p>
+                            <span className={`text-xs ${msg?.role=='sender'?'text-end pr-1':'pl-1 text-start'}`}>{msg?.time}</span>
                           </div>
                     </div>
               })

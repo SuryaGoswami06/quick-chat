@@ -3,6 +3,7 @@ import AppRoutes from './routes/AppRoutes'
 import {Provider} from 'react-redux'
 import store from './store/store.js'
 import socket from './utils/socketio.js'
+import { ToastContainer } from 'react-toastify'
 
 function AppProvider() {
 
@@ -24,6 +25,7 @@ function AppProvider() {
 
   return (
       <Provider store={store}>
+           <ToastContainer />
            <AppRoutes />
       </Provider>
   )
