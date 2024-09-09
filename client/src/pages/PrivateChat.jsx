@@ -4,10 +4,13 @@ import {useSelector,useDispatch} from 'react-redux'
 import {addMessage} from '../store/slices/allChats.js'
 import socket from '../utils/socketio.js'
 import toastify from '../utils/Toast.js'
+import EmojiPicker from 'emoji-picker-react';
+import emoji from '/images/emoji.webp'
 
 function PrivateChat() {
   const {roomid}=useParams();
   const [message,setMessage]=useState('')
+  const [isEmojiPickerOpen,setIsEmojiPickerOpen]=useState(false);
 
   const dispatch = useDispatch();
   const roomDetails = useSelector(state=>state?.allChats?.roomDetails[roomid])
@@ -51,9 +54,21 @@ function PrivateChat() {
       toastify('success','roomId copied sucessfully')
     }
   }
-
+  const handleEmojiSelect = (emojiData)=>{
+      setMessage(prev=>prev.concat(emojiData.emoji))
+      setIsEmojiPickerOpen(false);
+  }
   return (
-    <div className='w-full h-full flex flex-col relative'>
+    <div className='w-full h-full flex flex-col relative overflow-visible'>
+        
+        <EmojiPicker 
+         open={isEmojiPickerOpen}
+         height={350}
+         width={350} 
+         className='bottom-14 left-2 z-50' 
+         style={{position:'absolute'}}
+         onEmojiClick={handleEmojiSelect}
+          />
         <div className='h-[9.9%] flex justify-between border-b border-black overflow-hidden'>
            <div className='flex items-center'>
               <Link to='/chats'>
@@ -74,6 +89,7 @@ function PrivateChat() {
               <span>{participants}</span>
            </div>
         </div>
+
         <div className='overflow-y-auto h-[81%]'>
             {
               roomDetails?.content?.length!==0?roomDetails?.content?.map((msg,index)=>{
@@ -87,10 +103,15 @@ function PrivateChat() {
               }):<div className='text-center mt-44'>no chats😢🤦‍♀️</div>
             }
         </div>
-        <div className='absolute border-t border-black bottom-0 left-0 right-0 w-full'>
+
+        <div className='absolute flex border-t border-black bottom-0 left-0 right-0 w-full'>
+           <div onClick={()=>setIsEmojiPickerOpen(prev=>!prev)} className='w-[5%]
+            flex items-center justify-center cursor-pointer'>
+             <img src={emoji} className='h-6 w-6' alt="emoji picker" />
+           </div>
             <input 
             type="text" 
-            className=' p-3 w-[90%]' 
+            className=' p-3 w-[85%]' 
             value={message}
             onChange={(e)=>setMessage(e.target.value)}
             />
@@ -99,6 +120,7 @@ function PrivateChat() {
             onClick={handleSendMessageButton}
             >send</button>
         </div>
+
     </div>
   )
 }
