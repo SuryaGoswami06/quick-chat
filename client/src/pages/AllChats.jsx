@@ -4,13 +4,18 @@ import RoomDetails from '../components/RoomDetails';
 import { Outlet } from 'react-router-dom';
 import { setUserName } from '../store/slices/user.js';
 import toastify from '../utils/Toast.js';
+import { useParams } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive'
 
 function AllChats() {
+  const isDesktop = useMediaQuery({minWidth:788})
+  console.log(isDesktop)
   const roomIds = useSelector((state)=>state?.allChats?.roomIds);
   const userName = useSelector((state)=>state?.user?.name);
   const [editUserName,setEditUserName]=useState(userName);
 
   const dispatch = useDispatch();
+  const {roomid} = useParams();
 
   const handleUserNameChange = (e)=>{
     dispatch(setUserName(editUserName))
@@ -19,7 +24,8 @@ function AllChats() {
 
   return (
     <div className='flex w-full h-full'>
-      <div className='w-[30%] relative h-full border-r border-black overflow-y-auto'>
+      { 
+     (isDesktop || !roomid&&!isDesktop) && <div className={ `phone:w-[30%] w-full relative h-full border-r border-black overflow-y-auto`}>
           {
            roomIds?.length!==0?(
             <div className='flex flex-col'>
@@ -45,7 +51,12 @@ function AllChats() {
              </div>
           </div>
       </div>
-      <Outlet />
+      }
+      { 
+    (isDesktop || roomid) && <div className={` w-full h-full `}>
+        <Outlet />
+      </div>
+      }
     </div>
   )
 }

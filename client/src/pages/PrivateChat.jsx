@@ -53,7 +53,7 @@ function PrivateChat() {
   }
 
   return (
-    <div className='w-full flex flex-col relative'>
+    <div className='w-full h-full flex flex-col relative'>
         <div className='h-[9.9%] flex justify-between border-b border-black overflow-hidden'>
            <div className='flex items-center'>
               <Link to='/chats'>

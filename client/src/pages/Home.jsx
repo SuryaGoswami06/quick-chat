@@ -7,7 +7,7 @@ function Home() {
  return (
     <div className='flex flex-col w-full h-full'>
         <div className='flex flex-col border border-black rounded-lg max-w-[1024px] w-full h-[96%] md:h-[620px] mx-auto'>
-                <div className='h-[93%]'>
+                <div className='h-[93%] overflow-y-auto'>
                      <Outlet />
                 </div>
                 <div className='border-t border-black flex items-center justify-center h-[7%]'>

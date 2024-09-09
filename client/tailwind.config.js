@@ -8,6 +8,9 @@ export default {
     extend: {
       colors:{
         primaryColor:'#1877f2;'
+      },
+      screens:{
+        'phone':'788px'
       }
     },
   },
