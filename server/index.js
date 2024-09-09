@@ -9,12 +9,12 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-    origin:'http://localhost:5173'
+    origin:'https://cyan-horse-819386.hostingersite.com'
 }))
 
 const io = new Server(server,{
     cors:{
-        origin:'http://localhost:5173'
+        origin:'https://cyan-horse-819386.hostingersite.com'
     }
 })
 
@@ -95,7 +95,7 @@ io.on('connection',(socket)=>{
     })
 
     socket.on('disconnect',async()=>{
-         const roomIds = socketIds[socket.id]
+         const roomIds = socketIds[socket.id] || []
          for(let room of roomIds){
            const numberOfParticipants =await io.in(room).fetchSockets();
            console.log(numberOfParticipants,numberOfParticipants.length)
