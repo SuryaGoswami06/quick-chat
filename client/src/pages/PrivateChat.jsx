@@ -7,6 +7,7 @@ import toastify from '../utils/Toast.js'
 import EmojiPicker from 'emoji-picker-react';
 import emoji from '/images/emoji.webp'
 
+
 function PrivateChat() {
   const {roomid}=useParams();
   const [message,setMessage]=useState('')
@@ -17,6 +18,7 @@ function PrivateChat() {
   const userName = useSelector(state=>state?.user?.name)
   const participants = useSelector(state=>state?.allChats?.roomDetails[roomid]?.participants)
   const roomIdCopyRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   const handleSendMessageButton=()=>{
     if(message.trim()!==''){
@@ -48,6 +50,18 @@ function PrivateChat() {
       }
   },[])
 
+  useEffect(()=>{
+    const sendMessageUsingEnterButton = (e)=>{
+      if(e.code=='Enter'){
+        handleSendMessageButton()
+      }
+    }
+      chatContainerRef?.current?.addEventListener('keydown',sendMessageUsingEnterButton)
+      return ()=>{
+        chatContainerRef?.current?.removeEventListener('keydown',sendMessageUsingEnterButton)
+      }
+  },[])
+
   const handleCopyRoomId = ()=>{
     if(roomIdCopyRef.current){
       window.navigator.clipboard.writeText(roomIdCopyRef.current.innerHTML);
@@ -59,7 +73,7 @@ function PrivateChat() {
       setIsEmojiPickerOpen(false);
   }
   return (
-    <div className='w-full h-full flex flex-col relative overflow-visible'>
+    <div ref={chatContainerRef} className='w-full h-full flex flex-col relative overflow-visible'>
         
         <EmojiPicker 
          open={isEmojiPickerOpen}

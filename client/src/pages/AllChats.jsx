@@ -53,9 +53,12 @@ function AllChats() {
       </div>
       }
       { 
-    (isDesktop || roomid) && <div className={` w-full h-full `}>
+    (isDesktop && roomid || roomid) && <div className={` w-full h-full `}>
         <Outlet />
       </div>
+      }
+      {
+        isDesktop && !roomid && <div className='h-full w-full flex items-center justify-center'>no chats please select the room if you have 😊</div>
       }
     </div>
   )
