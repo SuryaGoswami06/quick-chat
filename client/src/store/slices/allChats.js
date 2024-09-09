@@ -14,6 +14,7 @@ const chatSlicer = createSlice({
             state.roomDetails[roomId]['roomName'] = roomName;
             state.roomDetails[roomId]['roomAvatar'] = roomAvatar;
             state.roomDetails[roomId]['content'] = [];
+            state.roomDetails[roomId]['participants']=1
             state.roomIds.push(roomId)
         }
        },
@@ -27,8 +28,14 @@ const chatSlicer = createSlice({
                 time
             })
         }
+       },
+       currentParticipants:(state,action)=>{
+        const {roomid,participant} = action.payload
+        if(state.roomDetails[roomid]){
+            state.roomDetails[roomid].participants=participant;
        }
+      }
     }
 })
-export const {addGroup,addMessage} = chatSlicer.actions
+export const {addGroup,addMessage,currentParticipants} = chatSlicer.actions
 export default chatSlicer.reducer

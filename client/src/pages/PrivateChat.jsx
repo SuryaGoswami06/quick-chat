@@ -12,6 +12,7 @@ function PrivateChat() {
   const dispatch = useDispatch();
   const roomDetails = useSelector(state=>state?.allChats?.roomDetails[roomid])
   const userName = useSelector(state=>state?.user?.name)
+  const participants = useSelector(state=>state?.allChats?.roomDetails[roomid]?.participants)
   const roomIdCopyRef = useRef(null);
 
   const handleSendMessageButton=()=>{
@@ -53,7 +54,7 @@ function PrivateChat() {
 
   return (
     <div className='w-full flex flex-col relative'>
-        <div className='flex justify-between border-b border-black p-[16.25px] overflow-hidden'>
+        <div className='h-[9.9%] flex justify-between border-b border-black overflow-hidden'>
            <div className='flex items-center'>
               <Link to='/chats'>
                 <img className='rotate-180 h-6 w-6 mx-3' src="https://img.icons8.com/?size=100&id=gkgXdvj3Owk3&format=png&color=000000" alt="back-to-chat-icon" />
@@ -68,13 +69,14 @@ function PrivateChat() {
                 </div>
               </div>
            </div>
-           <div>
-
+           <div className='flex items-center mr-3'>
+              <img className='w-6 h-6 mr-1' src="https://img.icons8.com/?size=100&id=UWNhN9bLYG1k&format=png&color=000000" alt="participants" />
+              <span>{participants}</span>
            </div>
         </div>
-        <div className='overflow-y-auto pb-36'>
+        <div className='overflow-y-auto h-[81%]'>
             {
-              roomDetails?.content?.map((msg,index)=>{
+              roomDetails?.content?.length!==0?roomDetails?.content?.map((msg,index)=>{
               return <div key={index} className={` flex w-full ${msg?.role=='sender'?'justify-end':'justify-start'}`}>
                           <div className={`flex flex-col`}>
                             <span className={`text-primaryColor text-sm ${msg?.role=='sender'?'pl-3':'pl-1'}`}>{msg?.role!=='sender'?msg?.userName:'you'}</span>
@@ -82,7 +84,7 @@ function PrivateChat() {
                             <span className={`text-xs ${msg?.role=='sender'?'text-end pr-1':'pl-1 text-start'}`}>{msg?.time}</span>
                           </div>
                     </div>
-              })
+              }):<div className='text-center mt-44'>no chats😢🤦‍♀️</div>
             }
         </div>
         <div className='absolute border-t border-black bottom-0 left-0 right-0 w-full'>

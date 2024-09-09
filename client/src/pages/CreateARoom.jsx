@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Input from '../components/Input'
 import Button from '../components/Button'
-import { ToastContainer } from 'react-toastify'
 import toastify from '../utils/Toast.js';
 import { v4 as uuidv4} from 'uuid';
 import socket from '../utils/socketio.js';
@@ -22,7 +21,6 @@ function CreateARoom() {
   const navigate = useNavigate();
   
   const userName = useSelector(state=>state?.user?.name);
-  const userProfileUrl = useSelector(state=>state?.user?.profileUrl);
 
   useEffect(()=>{
     let avatars = [];
@@ -55,6 +53,9 @@ function CreateARoom() {
         socket.on('room-detail',({roomId,roomAvatar,roomName})=>{
           dispatch(addGroup({roomId,roomAvatar,roomName}))
           toastify('success',`you joined - ${roomName}`)
+        })
+        socket.on('join-notification',(msg)=>{
+          toastify('success',msg)
         })
         navigate('/chats')
     }
