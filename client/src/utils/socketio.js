@@ -1,6 +1,5 @@
 import {io} from 'socket.io-client'
 
-const SOCKET_URL = 'http://localhost:3000'
-const socket = io(SOCKET_URL)
+const socket = io(import.meta.env.VITE_BACKEND_PRODUCTION_URL)
 
 export default socket;

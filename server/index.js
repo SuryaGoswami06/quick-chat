@@ -9,12 +9,12 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-    origin:'https://cyan-horse-819386.hostingersite.com'
+    origin:process.env.FRONTEND_PRODUCTION_URL
 }))
 
 const io = new Server(server,{
     cors:{
-        origin:'https://cyan-horse-819386.hostingersite.com'
+       origin:process.env.FRONTEND_PRODUCTION_URL
     }
 })
 
@@ -79,12 +79,11 @@ io.on('connection',(socket)=>{
                 roomAvatar:rooms[roomId]['roomAvatar'],
                 roomName:rooms[roomId]['roomName']
             })
-        }
-        if(!socketIds[socket.id]){
-            socketIds[socket.id]=[]
-        }
-        socketIds[socket.id].push(roomId)
-        
+            if(!socketIds[socket.id]){
+                socketIds[socket.id]=[]
+            }
+            socketIds[socket.id].push(roomId)
+        }       
     })
 
     socket.on('send-message',({ userName,
@@ -98,7 +97,6 @@ io.on('connection',(socket)=>{
          const roomIds = socketIds[socket.id] || []
          for(let room of roomIds){
            const numberOfParticipants =await io.in(room).fetchSockets();
-           console.log(numberOfParticipants,numberOfParticipants.length)
            if(numberOfParticipants.length==0){
                 delete rooms[room];
            }
