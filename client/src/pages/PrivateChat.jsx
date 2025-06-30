@@ -60,7 +60,7 @@ function PrivateChat() {
 
   useEffect(()=>{
     const sendMessageUsingEnterButton = (e)=>{
-      if(e.code=='Enter'){
+      if(e.key=='Enter'){
         handleSendMessageButton()
       }
     }
@@ -91,16 +91,15 @@ function PrivateChat() {
          style={{position:'absolute'}}
          onEmojiClick={handleEmojiSelect}
           />
-        <div className='h-[9.9%] flex justify-between border-b border-black overflow-hidden'>
+        <div className='h-[9.9%] flex justify-between border-b border-[#e2e8f0] overflow-hidden'>
            <div className='flex items-center'>
               <Link to='/chats'>
                 <img className='rotate-180 h-6 w-6 mx-3' src="https://img.icons8.com/?size=100&id=gkgXdvj3Owk3&format=png&color=000000" alt="back-to-chat-icon" />
               </Link>
-              <img className='sm:h-12 sm:w-12 h-8 w-8 rounded-full mx-3' src={roomDetails?.roomAvatar} alt="room-image" />
               <div className='flex flex-col'>
                 <span>{roomDetails?.roomName}</span>
                 <div className='flex items-center justify-center text-xs sm:text-base'>
-                  <span>room-id : &nbsp;</span>
+                  <span>🆔 : &nbsp;</span>
                   <span ref={roomIdCopyRef}>{roomid}</span>
                   <img onClick={handleCopyRoomId} className='h-5 w-5 ml-1 sm:ml-2 cursor-pointer' src='https://img.icons8.com/?size=100&id=5OYsjZnVeN8Z&format=png&color=000000' alt="" />
                 </div>
@@ -118,17 +117,17 @@ function PrivateChat() {
               return <div key={index} className={` flex w-full ${msg?.role=='sender'?'justify-end':'justify-start'}`}>
                           <div className={`flex flex-col ${msg?.role=='sender'?'pl-2':'pr-2'}`}>
                             <span className={`text-primaryColor text-sm ${msg?.role=='sender'?'pl-3':'pl-1'}`}>{msg?.role!=='sender'?msg?.userName:'you'}</span>
-                            <p className={`px-4 py-1 border-black border-y ${msg?.role=='sender'?'rounded-l-full border-l border-r-0':'rounded-r-full border-r border-l-0'}`}>{msg?.message}</p>
-                            <span className={`text-xs ${msg?.role=='sender'?'text-end pr-1':'pl-1 text-start'}`}>{msg?.time}</span>
+                            <p className={`px-4 py-1 border-[#e2e8f0] border-y ${msg?.role=='sender'?'rounded-l-full border-l border-r-0':'rounded-r-full border-r border-l-0'}`}>{msg?.message}</p>
+                            <span className={`text-[10px] ${msg?.role=='sender'?'text-end pr-1':'pl-1 text-start'}`}>{msg?.time}</span>
                           </div>
                     </div>
               }):<div className='text-center mt-44'>no chats😢🤦‍♀️</div>
             }
         </div>
 
-        <div className='absolute flex border-t border-black bottom-0 left-0 right-0 '>
+        <div className='absolute flex border-t border-[#e2e8f0] bottom-0 left-0 right-0 '>
            <div onClick={()=>setIsEmojiPickerOpen(prev=>!prev)} className='
-            flex items-center justify-center cursor-pointer border-r border-black'>
+            flex items-center justify-center cursor-pointer border-r border-[#e2e8f0]'>
              <img src={emoji} className='h-6 w-6 my-3 mx-5' alt="emoji picker" />
            </div>
             <input 

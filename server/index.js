@@ -9,12 +9,12 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-    origin:process.env.FRONTEND_PRODUCTION_URL
+    origin:process.env.FRONTEND_DEVELOPMENT_URL
 }))
 
 const io = new Server(server,{
     cors:{
-       origin:process.env.FRONTEND_PRODUCTION_URL
+       origin:process.env.FRONTEND_DEVELOPMENT_URL
     }
 })
 
@@ -27,24 +27,20 @@ app.get('/',(req,res)=>{
 const rooms = {
 
 }
-const socketIds ={
-
-}
 
 io.on('connection',(socket)=>{
 
-    console.log('socker id :'+socket.id)
-
-    const updateParticipants =async (socket)=>{
+    const updateParticipants =async (socket,len)=>{
         const roomIds = Array.from(socket.rooms).filter(room=>room!==socket.id)
         for(const roomId of roomIds){
             const numberOfParticipants = await io.in(roomId).fetchSockets();
-            if(numberOfParticipants.length==0){
+            console.log(numberOfParticipants.length,len);
+            if(numberOfParticipants.length-len==0){
                 delete rooms[roomId]
             }
             io.to(roomId).emit('current-participant',{
                 roomid:roomId,
-                participant:numberOfParticipants.length
+                participant:numberOfParticipants.length-len
             })
         }
     } 
@@ -52,38 +48,26 @@ io.on('connection',(socket)=>{
     socket.on('create-room',({
         roomId,
         roomName,
-        roomAvatar,
         userName
        })=>{
         if(!rooms[roomId]){
             rooms[roomId]={}
             rooms[roomId]['roomName']=roomName;
-            rooms[roomId]['roomAvatar']=roomAvatar;
         }
         socket.join(roomId);
-        if(!socketIds[socket.id]){
-            socketIds[socket.id]=[]
-        }
-        socketIds[socket.id].push(roomId)
-        
-        console.log(roomId)
     })
 
-    socket.on('join-room',({roomId,userName})=>{
+    socket.on('join-room', async({roomId,userName})=>{
         if(rooms[roomId]){
             socket.join(roomId);
-            updateParticipants(socket);
+            await updateParticipants(socket,0);
             socket.to(roomId).emit('join-notification',`${userName} joined the group`)
             socket.emit('room-detail',{
                 roomId,
-                roomAvatar:rooms[roomId]['roomAvatar'],
                 roomName:rooms[roomId]['roomName']
             })
-            if(!socketIds[socket.id]){
-                socketIds[socket.id]=[]
-            }
-            socketIds[socket.id].push(roomId)
-        }       
+        }  
+        console.log(rooms,"during joining room")     
     })
 
     socket.on('send-message',({ userName,
@@ -93,21 +77,12 @@ io.on('connection',(socket)=>{
             socket.to(roomid).emit('receive-message',{roomid,userName,message,time})
     })
 
-    socket.on('disconnect',async()=>{
-         const roomIds = socketIds[socket.id] || []
-         for(let room of roomIds){
-           const numberOfParticipants =await io.in(room).fetchSockets();
-           if(numberOfParticipants.length==0){
-                delete rooms[room];
-           }
-           io.to(room).emit('current-participant',{
-            participant:numberOfParticipants.length,
-            roomid:room
-           })
-         }
-         delete socketIds[socket.id];
+    socket.on('disconnecting',async()=>{
+        await updateParticipants(socket,1)
+         console.log(rooms,"during disconnection")
     })
 })
 server.listen(port,()=>{
     console.log("server is running at the port number "+port);
 })
+

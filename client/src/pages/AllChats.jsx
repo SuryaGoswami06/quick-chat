@@ -25,7 +25,7 @@ function AllChats() {
   return (
     <div className='flex w-full h-full'>
       { 
-     (isDesktop || !roomid&&!isDesktop) && <div className={ `phone:w-[30%] w-full relative h-full border-r border-black overflow-y-auto`}>
+     (isDesktop || !roomid&&!isDesktop) && <div className={ `phone:w-[30%] w-full relative h-full border-r border-[#e2e8f0] overflow-y-auto`}>
           {
            roomIds?.length!==0?(
             <div className='flex flex-col'>
@@ -42,11 +42,11 @@ function AllChats() {
           <div className='absolute bottom-0 flex items-center w-full'>
               <input 
               type="text" 
-              className='p-3 w-[85%] border-t border-r border-black' 
+              className='p-3 w-[85%] border-t border-r border-[#e2e8f0]' 
               value={editUserName} 
               onChange={(e)=>setEditUserName(e.target.value)} 
               />
-              <div onClick={handleUserNameChange} className='cursor-pointer w-[15%] border-t border-black h-[48.8px] flex items-center justify-center'>
+              <div onClick={handleUserNameChange} className='cursor-pointer w-[15%] border-t border-[#e2e8f0] h-[48.8px] flex items-center justify-center'>
                  <img className='w-7 h-7' src="https://img.icons8.com/?size=100&id=119003&format=png&color=000000" alt="edit" />
              </div>
           </div>

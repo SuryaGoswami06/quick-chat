@@ -8,11 +8,10 @@ const chatSlicer = createSlice({
     },
     reducers:{
        addGroup:(state,action)=>{
-        const {roomId,roomName,roomAvatar} = action.payload
+        const {roomId,roomName} = action.payload
         if(!state.roomDetails[roomId]){
             state.roomDetails[roomId] = {};
             state.roomDetails[roomId]['roomName'] = roomName;
-            state.roomDetails[roomId]['roomAvatar'] = roomAvatar;
             state.roomDetails[roomId]['content'] = [];
             state.roomDetails[roomId]['participants']=1
             state.roomIds.push(roomId)
