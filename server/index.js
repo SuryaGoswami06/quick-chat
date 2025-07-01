@@ -9,12 +9,12 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-    origin:process.env.FRONTEND_DEVELOPMENT_URL
+    origin:process.env.FRONTEND_PRODUCTION_URL
 }))
 
 const io = new Server(server,{
     cors:{
-       origin:process.env.FRONTEND_DEVELOPMENT_URL
+       origin:process.env.FRONTEND_PRODUCTION_URL
     }
 })
 
